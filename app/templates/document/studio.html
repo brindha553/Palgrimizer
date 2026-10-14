@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% block title %}Document Studio | {{ doc.title }} | Palgrimizer AI{% endblock %}
+
+{% block extra_css %}
+<style>
+.studio-layout { display: grid; grid-template-columns: 1fr 340px; gap: 1.75rem; align-items: start; }
+.score-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.75rem; }
+.score-mini-card { padding: 1rem; text-align: center; }
+.score-mini-val { font-size: 1.6rem; font-weight: 800; }
+.score-mini-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.2rem; }
+.stat-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; border-radius: var(--radius-full); background: var(--bg-input); border: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-secondary); }
+.diff-add { background: var(--accent-emerald-bg); color: var(--accent-emerald); padding: 0.1rem 0.25rem; border-radius: 4px; font-weight: 600; }
+.diff-del { background: var(--accent-crimson-bg); color: var(--accent-crimson); padding: 0.1rem 0.25rem; border-radius: 4px; text-decoration: line-through; }
+.category-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.sev-high { color: var(--accent-crimson); }
+.sev-medium { color: var(--accent-amber); }
+.sev-low { color: var(--accent-emerald); }
+</style>
+{% endblock %}
+
+{% block content %}
+<input type="hidden" id="documentId" value="{{ doc.id }}">
+
+<!-- Studio Header -->
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 1rem; min-width: 0;">
+        <a href="{{ url_for('history.index') }}" class="btn btn-secondary btn-icon btn-sm"><i data-lucide="arrow-left"></i></a>
+        <div>
+            <h2 style="font-size: 1.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 480px;">{{ doc.title }}</h2>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.3rem; flex-wrap: wrap;">
+                <span class="stat-chip"><i data-lucide="file" style="width: 14px;"></i> {{ doc.file_type | upper }}</span>
+                <span class="stat-chip"><i data-lucide="globe" style="width: 14px;"></i> {{ doc.language | upper }}</span>
+                {% if report %}
+                <span class="stat-chip"><i data-lucide="book-open" style="width: 14px;"></i> {{ report.word_count }} words</span>
+                <span class="stat-chip"><i data-lucide="clock" style="width: 14px;"></i> ~{{ report.estimated_reading_time }} min read</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <button class="btn btn-primary btn-sm" id="applyAllCorrectionsBtn" style="border-radius: var(--radius-full);">
+            <i data-lucide="check-check"></i> Apply All Corrections
+        </button>
+        <a href="{{ url_for('history.export_doc', doc_id=doc.id, format_type='pdf') }}" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full);">
+            <i data-lucide="file-text" style="color: #ef4444;"></i> PDF
+        </a>
+        <a href="{{ url_for('history.export_doc', doc_id=doc.id, format_type='docx') }}" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full);">
+            <i data-lucide="file-type-2" style="color: #2563eb;"></i> DOCX
+        </a>
+        <a href="{{ url_for('history.export_doc', doc_id=doc.id, format_type='txt') }}" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full);">
+            <i data-lucide="file" style="color: #10b981;"></i> TXT
+        </a>
+        <a href="{{ url_for('history.export_doc', doc_id=doc.id, format_type='md') }}" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full);">
+            <i data-lucide="file-code"></i> MD
+        </a>
+    </div>
+</div>
+
+<!-- Score Cards -->
+{% if report %}
+<div class="score-grid">
+    <div class="glass-card score-mini-card">
+        <div class="score-mini-val gradient-text" id="overallScoreText">{{ report.overall_score }}%</div>
+        <div class="score-mini-label">Overall Score</div>
+        <div class="score-bar" style="margin-top: 0.5rem;"><div class="score-bar-fill" style="width: {{ report.overall_score }}%;"></div></div>
+    </div>
+    <div class="glass-card score-mini-card">
+        <div class="score-mini-val" style="color: var(--accent-emerald);">{{ report.grammar_score }}%</div>
+        <div class="score-mini-label">Grammar</div>
+        <div class="score-bar" style="margin-top: 0.5rem;"><div class="score-bar-fill" style="width: {{ report.grammar_score }}%; background: var(--accent-emerald);"></div></div>
+    </div>
+    <div class="glass-card score-mini-card">
+        <div class="score-mini-val" style="color: var(--accent-amber);">{{ report.spelling_score }}%</div>
+        <div class="score-mini-label">Spelling</div>
+        <div class="score-bar" style="margin-top: 0.5rem;"><div class="score-bar-fill" style="width: {{ report.spelling_score }}%; background: var(--accent-amber);"></div></div>
+    </div>
+    <div class="glass-card score-mini-card">
+        <div class="score-mini-val" style="color: var(--secondary);">{{ report.readability_score }}%</div>
+        <div class="score-mini-label">Readability</div>
+        <div class="score-bar" style="margin-top: 0.5rem;"><div class="score-bar-fill" style="width: {{ report.readability_score }}%; background: var(--secondary);"></div></div>
+    </div>
+    <div class="glass-card score-mini-card">
+        <div class="score-mini-val" style="color: var(--primary);">{{ report.formatting_score }}%</div>
+        <div class="score-mini-label">Formatting</div>
+        <div class="score-bar" style="margin-top: 0.5rem;"><div class="score-bar-fill" style="width: {{ report.formatting_score }}%;"></div></div>
+    </div>
+    <div class="glass-card score-mini-card">
+        <div class="score-mini-val" style="color: var(--accent-emerald);">{{ report.professional_score }}%</div>
+        <div class="score-mini-label">Professional</div>
+        <div class="score-bar" style="margin-top: 0.5rem;"><div class="score-bar-fill" style="width: {{ report.professional_score }}%; background: var(--accent-emerald);"></div></div>
+    </div>
+    <div class="glass-card score-mini-card">
+        <div class="score-mini-val" style="color: var(--accent-amber);">{{ report.alignment_score }}%</div>
+        <div class="score-mini-label">Alignment</div>
+        <div class="score-bar" style="margin-top: 0.5rem;"><div class="score-bar-fill" style="width: {{ report.alignment_score }}%; background: var(--accent-amber);"></div></div>
+    </div>
+    <div class="glass-card score-mini-card">
+        <div class="score-mini-val" style="color: var(--secondary);">{{ report.typography_score }}%</div>
+        <div class="score-mini-label">Typography</div>
+        <div class="score-bar" style="margin-top: 0.5rem;"><div class="score-bar-fill" style="width: {{ report.typography_score }}%; background: var(--secondary);"></div></div>
+    </div>
+</div>
+
+<!-- Document Stats Bar -->
+<div class="glass-card" style="padding: 1rem 1.5rem; margin-bottom: 1.75rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+    <span class="stat-chip"><i data-lucide="align-left" style="width: 14px;"></i> {{ report.word_count }} Words</span>
+    <span class="stat-chip"><i data-lucide="type" style="width: 14px;"></i> {{ report.character_count }} Characters</span>
+    <span class="stat-chip"><i data-lucide="minus" style="width: 14px;"></i> {{ report.sentence_count }} Sentences</span>
+    <span class="stat-chip"><i data-lucide="pilcrow" style="width: 14px;"></i> {{ report.paragraph_count }} Paragraphs</span>
+    <span class="stat-chip"><i data-lucide="file" style="width: 14px;"></i> ~{{ report.page_count }} Page(s)</span>
+    <span class="stat-chip"><i data-lucide="clock" style="width: 14px;"></i> ~{{ report.estimated_reading_time }} min read</span>
+    <span class="badge badge-info" style="margin-left: auto;"><i data-lucide="brain" style="width: 14px;"></i> AI Confidence: {{ report.ai_confidence }}%</span>
+    <span class="badge badge-success"><i data-lucide="check-circle" style="width: 14px;"></i> {{ corrections | selectattr('status', 'eq', 'pending') | list | length }} suggestions pending</span>
+</div>
+{% endif %}
+
+<!-- Diff Workspace -->
+<div class="diff-workspace">
+    <!-- Toolbar -->
+    <div class="diff-toolbar">
+        <div class="view-mode-toggle">
+            <button class="mode-btn active" data-mode="side-by-side">Side by Side</button>
+            <button class="mode-btn" data-mode="inline">Inline Diff</button>
+        </div>
+        <div style="color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="info" style="width: 16px;"></i> Click suggestions in the panel to accept or reject changes
+        </div>
+    </div>
+
+    <!-- Side-by-Side View -->
+    <div class="side-by-side-container" id="sideBySideView">
+        <div class="diff-panel">
+            <div class="diff-panel-header">
+                <span style="display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="file-text" style="color: var(--accent-crimson); width: 18px;"></i> Original Document</span>
+                <span class="badge badge-danger">Has {{ corrections | length }} Issues</span>
+            </div>
+            <div class="diff-panel-content" id="originalTextContent">{{ doc.original_text }}</div>
+        </div>
+        <div class="diff-panel">
+            <div class="diff-panel-header">
+                <span style="display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="wand-2" style="color: var(--accent-emerald); width: 18px;"></i> AI Corrected Version</span>
+                <span class="badge badge-success">Optimized</span>
+            </div>
+            <div class="diff-panel-content" style="color: var(--accent-emerald);">{{ doc.corrected_text or doc.original_text }}</div>
+        </div>
+    </div>
+
+    <!-- Inline Diff View -->
+    <div id="inlineDiffView" style="display: none;">
+        <div class="diff-panel">
+            <div class="diff-panel-header">
+                <span style="display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="git-compare" style="color: var(--primary); width: 18px;"></i> Inline Comparison View</span>
+            </div>
+            <div class="diff-panel-content">
+                {% if corrections %}
+                    {% for c in corrections[:8] %}
+                        <span>...context... </span>
+                        <span class="diff-del" title="{{ c.explanation }}">{{ c.original_segment }}</span>
+                        <span class="diff-add" title="{{ c.explanation }}">{{ c.suggested_segment }}</span>
+                        <span> ...context...</span>
+                        {% if not loop.last %}<br><br>{% endif %}
+                    {% endfor %}
+                {% else %}
+                    <span style="color: var(--accent-emerald);">{{ doc.corrected_text or doc.original_text }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Suggestions Panel (below diff) -->
+{% if corrections %}
+<div class="glass-card" style="padding: 1.5rem; margin-top: 1.75rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h3 style="display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="list-checks" style="color: var(--primary);"></i>
+            AI Correction Suggestions
+            <span class="badge badge-danger" style="margin-left: 0.5rem;">{{ corrections | length }}</span>
+        </h3>
+        <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-primary btn-sm" id="applyAllCorrectionsBtn2" style="border-radius: var(--radius-full);">
+                <i data-lucide="check-check"></i> Apply All
+            </button>
+        </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        {% for c in corrections %}
+        <div class="suggestion-card" id="suggestion-card-{{ c.id }}">
+            <div style="display: flex; align-items: flex-start; gap: 0.85rem;">
+                <span class="badge {% if c.severity == 'high' or c.severity == 'critical' %}badge-danger{% elif c.severity == 'medium' %}badge-warning{% else %}badge-success{% endif %}" style="flex-shrink: 0; margin-top: 0.1rem;">
+                    {{ c.category | replace('_', ' ') | title }}
+                </span>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                        <span style="font-size: 0.85rem; background: var(--accent-crimson-bg); color: var(--accent-crimson); padding: 0.15rem 0.5rem; border-radius: 4px; font-family: 'JetBrains Mono', monospace; text-decoration: line-through;">{{ c.original_segment[:50] }}{% if c.original_segment|length > 50 %}...{% endif %}</span>
+                        <i data-lucide="arrow-right" style="color: var(--text-muted); width: 14px; align-self: center;"></i>
+                        <span style="font-size: 0.85rem; background: var(--accent-emerald-bg); color: var(--accent-emerald); padding: 0.15rem 0.5rem; border-radius: 4px; font-family: 'JetBrains Mono', monospace;">{{ c.suggested_segment[:50] }}{% if c.suggested_segment|length > 50 %}...{% endif %}</span>
+                    </div>
+                    <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0;">{{ c.explanation }}</p>
+                    <div class="suggestion-actions">
+                        <button class="btn btn-sm accept-btn" data-corr-id="{{ c.id }}" style="background: var(--accent-emerald-bg); color: var(--accent-emerald); border: 1px solid rgba(16,185,129,0.3); border-radius: var(--radius-full);">
+                            <i data-lucide="check" style="width: 14px;"></i> Accept
+                        </button>
+                        <button class="btn btn-sm reject-btn" data-corr-id="{{ c.id }}" style="background: var(--accent-crimson-bg); color: var(--accent-crimson); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-full);">
+                            <i data-lucide="x" style="width: 14px;"></i> Reject
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/diff_editor.js') }}"></script>
+<script>
+// Second apply-all button
+const btn2 = document.getElementById('applyAllCorrectionsBtn2');
+if (btn2) {
+    btn2.addEventListener('click', () => {
+        document.getElementById('applyAllCorrectionsBtn').click();
+    });
+}
+// Wire score-bar animation on load
+document.querySelectorAll('.score-bar-fill').forEach(bar => {
+    const w = bar.style.width;
+    bar.style.width = '0';
+    setTimeout(() => { bar.style.width = w; }, 200);
+});
+</script>
+{% endblock %}

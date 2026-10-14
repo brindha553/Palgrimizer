@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In | Palgrimizer AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 440px; margin: 3rem auto;">
+    <div class="glass-card" style="padding: 2.5rem 2rem;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div class="brand-icon" style="margin: 0 auto 1rem auto; width: 48px; height: 48px; font-size: 1.3rem;">
+                <i data-lucide="wand-2"></i>
+            </div>
+            <h2>Welcome Back</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem;">
+                Sign in to your Palgrimizer AI workspace
+            </p>
+        </div>
+
+        <form action="{{ url_for('auth.login') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label" for="loginEmail">Email Address</label>
+                <input type="email" class="form-control" id="loginEmail" name="email" required placeholder="name@company.com">
+            </div>
+
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <a href="{{ url_for('auth.forgot_password') }}" style="font-size: 0.8rem;">Forgot password?</a>
+                </div>
+                <div style="position: relative;">
+                    <input type="password" class="form-control" id="loginPassword" name="password" required placeholder="••••••••">
+                    <button type="button" class="pwd-toggle-btn" data-target="loginPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer;">
+                        <i data-lucide="eye" style="width: 16px;"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">
+                    <input type="checkbox" name="remember" checked> Remember me
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem;">
+                <i data-lucide="log-in" style="width: 16px; margin-right: 0.5rem;"></i> Sign In
+            </button>
+        </form>
+
+        <div style="text-align: center; margin: 1.5rem 0; position: relative;">
+            <hr style="border: 0; border-top: 1px solid var(--border-color);">
+            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-card); padding: 0 0.5rem; color: var(--text-muted); font-size: 0.8rem;">OR</span>
+        </div>
+
+        <button type="button" class="btn btn-secondary" id="googleLoginBtn" style="width: 100%;">
+            <i class="fab fa-google" style="color: #ea4335;"></i> Sign in with Google
+        </button>
+
+        <p style="text-align: center; margin-top: 1.75rem; font-size: 0.9rem; color: var(--text-secondary);">
+            Don't have an account? <a href="{{ url_for('auth.register') }}" style="font-weight: 600;">Register Now</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}

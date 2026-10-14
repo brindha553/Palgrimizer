@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Features | Palgrimizer AI{% endblock %}
+{% block content %}
+<div style="text-align: center; margin-bottom: 4rem;">
+    <span class="badge badge-info" style="margin-bottom: 1rem;">Complete Platform Capabilities</span>
+    <h1 style="font-size: 2.6rem;">AI-Powered Document Intelligence</h1>
+    <p style="color: var(--text-secondary); max-width: 640px; margin: 1rem auto 0 auto;">
+        Palgrimizer runs advanced multi-layer NLP over your documents, detecting and correcting every imperfection across 14 distinct categories.
+    </p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.75rem; margin-bottom: 5rem;">
+    {% set features = [
+        ('spell-check','Grammar & Spelling','primary','Identifies grammatical agreement errors, tense mismatches, homophone confusions, and misspellings across 100+ languages with AI context awareness.'),
+        ('align-left','Alignment & Formatting','secondary','Detects indent inconsistencies, misaligned text blocks, improper tab stops, and broken table cell padding.'),
+        ('font','Typography & Fonts','accent-amber','Catches mixed font families, non-standard font sizes, inconsistent heading weights, and orphaned text elements.'),
+        ('glasses','Readability Analysis','accent-emerald','Computes Flesch-Kincaid scores, Gunning Fog index, average sentence length, and reading velocity estimates.'),
+        ('list-check','Heading Hierarchy','primary','Validates structural heading levels, detects skipped H-levels and inconsistent section numbering across the document.'),
+        ('table','Table Formatting','secondary','Verifies column alignment, missing headers, irregular row heights, and content overflow inside table cells.'),
+        ('copy','Duplicate Detection','accent-amber','Flags repeated sentences, duplicate paragraphs, and copy-pasted content blocks within the same document.'),
+        ('minimize','Whitespace Control','accent-emerald','Removes double spaces, excessive blank lines, trailing whitespace, and unnecessary line breaks.'),
+        ('quote-left','Passive Voice','primary','Detects passive voice constructs and suggests stronger active-voice rewrites for professional tone.'),
+        ('book-sparkles','Vocabulary Enhancement','secondary','Identifies overused weak words like "very", "really", "stuff" and recommends stronger professional vocabulary.'),
+        ('camera-retro','OCR Scanner','accent-amber','Extracts text from PNG, JPG, JPEG image uploads and scanned PDF documents using optical character recognition.'),
+        ('microphone','Voice Dictation','accent-emerald','Real-time Web Speech API dictation directly into the document editor with automatic punctuation injection.'),
+        ('robot','AI Assistant','primary','Context-aware chat assistant for rewriting, summarization, translation, tone adjustment, and email/report generation.'),
+        ('download','Multi-Format Export','secondary','Downloads corrected documents as PDF, DOCX, TXT, or Markdown with a single click.')
+    ] %}
+    {% for icon, title, color_key, desc in features %}
+    <div class="glass-card" style="padding: 1.75rem;">
+        <div class="stat-icon" style="background: hsla(var(--{% if color_key == 'primary' %}primary-hsl{% elif color_key == 'secondary' %}secondary-hsl{% else %}0,0,60%{% endif %}), 0.12); color: var(--{{ color_key }}); margin-bottom: 1rem;">
+            <i data-lucide="{{ icon }}"></i>
+        </div>
+        <h3 style="font-size: 1.05rem; margin-bottom: 0.6rem;">{{ title }}</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">{{ desc }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div style="text-align: center; margin-bottom: 3rem;">
+    <a href="{{ url_for('auth.register') }}" class="btn btn-primary" style="padding: 0.9rem 2.5rem; font-size: 1.05rem;">
+        <i data-lucide="rocket"></i> Start Correcting for Free
+    </a>
+</div>
+{% endblock %}

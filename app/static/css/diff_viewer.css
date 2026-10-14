@@ -1,0 +1,132 @@
+/* ==========================================================================
+   PALGRIMIZER DOCUMENT INTERACTIVE DIFF VIEWER STYLES
+   ========================================================================== */
+
+.diff-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.diff-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.view-mode-toggle {
+    display: inline-flex;
+    background: var(--bg-input);
+    padding: 0.25rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.mode-btn {
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mode-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+/* Side-by-Side Layout */
+.side-by-side-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    min-height: 520px;
+}
+
+.diff-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.diff-panel-header {
+    padding: 0.85rem 1.25rem;
+    background: rgba(0, 0, 0, 0.04);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.diff-panel-content {
+    flex: 1;
+    padding: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    max-height: 600px;
+}
+
+/* Token Highlights */
+.diff-del {
+    background-color: var(--accent-crimson-bg);
+    color: var(--accent-crimson);
+    text-decoration: line-through;
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+    border: 1px dashed rgba(239, 68, 68, 0.4);
+    cursor: pointer;
+}
+
+.diff-add {
+    background-color: var(--accent-emerald-bg);
+    color: var(--accent-emerald);
+    font-weight: 600;
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    cursor: pointer;
+}
+
+/* Suggestions Sidebar Card */
+.suggestion-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all var(--transition-fast);
+}
+
+.suggestion-card:hover {
+    border-color: var(--border-highlight);
+    box-shadow: var(--shadow-sm);
+}
+
+.suggestion-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+/* Responsive Diff */
+@media (max-width: 992px) {
+    .side-by-side-container {
+        grid-template-columns: 1fr;
+    }
+}

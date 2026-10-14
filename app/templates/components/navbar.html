@@ -1,0 +1,44 @@
+<nav class="navbar premium-navbar">
+    <a href="{{ url_for('main.index') }}" class="nav-brand">
+        <div class="brand-icon" style="background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary)); box-shadow: 0 0 15px var(--theme-glow);">
+            <i data-lucide="sparkles" style="color: white;"></i>
+        </div>
+        <span style="font-weight: 800; letter-spacing: -0.5px;">Palgrimizer<span style="color: var(--theme-primary);">.ai</span></span>
+    </a>
+
+    <ul class="nav-links">
+        <li><a href="{{ url_for('main.index') }}" class="premium-nav-link {% if request.endpoint == 'main.index' %}active{% endif %}">Home</a></li>
+        <li><a href="{{ url_for('main.features') }}" class="premium-nav-link {% if request.endpoint == 'main.features' %}active{% endif %}">Features</a></li>
+        <li><a href="{{ url_for('main.pricing') }}" class="premium-nav-link {% if request.endpoint == 'main.pricing' %}active{% endif %}">Pricing</a></li>
+        <li><a href="{{ url_for('main.about') }}" class="premium-nav-link {% if request.endpoint == 'main.about' %}active{% endif %}">About</a></li>
+        <li><a href="{{ url_for('main.contact') }}" class="premium-nav-link {% if request.endpoint == 'main.contact' %}active{% endif %}">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+        <button type="button" class="btn btn-secondary btn-icon search-trigger" title="AI Search (Cmd+K)">
+            <i data-lucide="search"></i>
+        </button>
+        <button type="button" class="btn btn-secondary btn-icon" id="themeCustomizerBtn" title="Premium Themes">
+            <i data-lucide="palette"></i>
+        </button>
+        <button type="button" class="btn btn-secondary btn-icon theme-toggle-btn" title="Toggle Dark/Light Mode">
+            <i data-lucide="moon"></i>
+        </button>
+
+        {% if current_user %}
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary" style="position: relative;">
+                <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i> Dashboard
+                <span class="premium-badge">3</span>
+            </a>
+            <a href="{{ url_for('document.upload') }}" class="btn btn-premium magnetic-btn ripple-btn">
+                <i data-lucide="upload-cloud" style="width: 18px; height: 18px;"></i> Upload Doc
+            </a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm" title="Sign Out">
+                <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+            </a>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-secondary magnetic-btn">Sign In</a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-premium magnetic-btn ripple-btn">Get Started Free</a>
+        {% endif %}
+    </div>
+</nav>

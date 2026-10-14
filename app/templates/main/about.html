@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}About | Palgrimizer AI{% endblock %}
+{% block content %}
+<section style="max-width: 800px; margin: 0 auto 5rem auto; text-align: center;">
+    <span class="badge badge-info" style="margin-bottom: 1rem;">Our Mission</span>
+    <h1 style="font-size: 2.6rem; margin-bottom: 1.25rem;">Built for Enterprise Document Excellence</h1>
+    <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.75;">
+        Palgrimizer was founded with a single mission: make enterprise-grade document quality accessible to every writer, analyst, legal professional, and researcher on the planet.
+    </p>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.75rem; margin-bottom: 5rem;">
+    <div class="glass-card" style="padding: 2rem; text-align: center;">
+        <div class="stat-icon" style="margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center;"><i data-lucide="brain"></i></div>
+        <h3>AI-First Architecture</h3>
+        <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">Our multi-layer NLP pipeline runs 14+ simultaneous analysis passes over every document, producing precision-level correction reports in milliseconds.</p>
+    </div>
+    <div class="glass-card" style="padding: 2rem; text-align: center;">
+        <div class="stat-icon" style="margin: 0 auto 1rem auto; background: var(--accent-emerald-bg); color: var(--accent-emerald); display: flex; align-items: center; justify-content: center;"><i data-lucide="shield"></i></div>
+        <h3>Enterprise Security</h3>
+        <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">Secure session authentication, password hashing, CSRF protection, and XSS sanitization baked into every API endpoint and form submission.</p>
+    </div>
+    <div class="glass-card" style="padding: 2rem; text-align: center;">
+        <div class="stat-icon" style="margin: 0 auto 1rem auto; background: var(--accent-amber-bg); color: var(--accent-amber); display: flex; align-items: center; justify-content: center;"><i data-lucide="globe"></i></div>
+        <h3>100+ Language Support</h3>
+        <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">Multi-language document analysis with localization-aware grammar correction, transliteration, and region-specific formatting standards.</p>
+    </div>
+</div>
+{% endblock %}

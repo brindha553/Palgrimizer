@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Document Library | Palgrimizer AI{% endblock %}
+
+{% block extra_css %}
+<style>
+.doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
+.doc-card { padding: 1.5rem; transition: all var(--transition-smooth); display: flex; flex-direction: column; }
+.doc-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.doc-card-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+.doc-card-icon { width: 48px; height: 48px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--bg-input); border: var(--glass-border); }
+.doc-card-actions { display: flex; gap: 0.5rem; margin-top: auto; padding-top: 1.25rem; flex-wrap: wrap; }
+.search-bar { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; }
+.score-pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.6rem; border-radius: var(--radius-full); font-size: 0.78rem; font-weight: 700; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>--
+        <h1 style="font-size: 2.2rem;">Document Library</h1>
+        <p style="color: var(--text-secondary); margin-top: 0.25rem;">
+            {% if documents %}{{ documents | length }} document(s) found{% else %}No documents yet{% endif %}
+        </p>
+    </div>
+    <a href="{{ url_for('document.upload') }}" class="btn btn-primary" style="border-radius: var(--radius-full);">
+        <i data-lucide="upload-cloud"></i> Upload New Document
+    </a>
+</div>
+
+<!-- Search & Filter Bar -->
+<form method="GET" class="search-bar">
+    <div style="flex: 1; min-width: 280px; position: relative;">
+        <i data-lucide="search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px;"></i>
+        <input type="text" name="q" class="form-control" placeholder="Search documents..." value="{{ query_str }}" style="padding-left: 2.5rem; border-radius: var(--radius-full);">
+    </div>
+    <select name="type" class="form-control" style="max-width: 140px; border-radius: var(--radius-full);">
+        <option value="">All Types</option>
+        <option value="pdf" {% if file_type == 'pdf' %}selected{% endif %}>PDF</option>
+        <option value="docx" {% if file_type == 'docx' %}selected{% endif %}>DOCX</option>
+        <option value="txt" {% if file_type == 'txt' %}selected{% endif %}>TXT</option>
+        <option value="rtf" {% if file_type == 'rtf' %}selected{% endif %}>RTF</option>
+        <option value="png" {% if file_type == 'png' %}selected{% endif %}>Image (OCR)</option>
+    </select>
+    <select name="sort" class="form-control" style="max-width: 160px; border-radius: var(--radius-full);">
+        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest First</option>
+        <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Oldest First</option>
+        <option value="title" {% if sort_by == 'title' %}selected{% endif %}>By Title (A-Z)</option>
+    </select>
+    <button type="submit" class="btn btn-primary" style="border-radius: var(--radius-full);"><i data-lucide="filter" style="width: 16px;"></i> Filter</button>
+    {% if query_str or file_type %}
+    <a href="{{ url_for('history.index') }}" class="btn btn-secondary btn-icon" style="border-radius: var(--radius-full);"><i data-lucide="x"></i></a>
+    {% endif %}
+</form>
+
+<!-- Document Grid -->
+{% if documents %}
+<div class="doc-grid">
+    {% for doc in documents %}
+    <div class="glass-card doc-card">
+        <div class="doc-card-header">
+            <div class="doc-card-icon {% if doc.file_type == 'pdf' %}
+                style='color: var(--accent-crimson);'
+            {% elif doc.file_type == 'docx' %}
+                style='color: var(--primary);'
+            {% elif doc.file_type in ['png','jpg','jpeg'] %}
+                style='color: var(--secondary);'
+            {% else %}
+                style='color: var(--accent-emerald);'
+            {% endif %}">
+                <i data-lucide="{% if doc.file_type == 'pdf' %}file-text{% elif doc.file_type == 'docx' %}file-type-2{% elif doc.file_type in ['png','jpg','jpeg'] %}image{% else %}file{% endif %}"></i>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+                <div style="font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ doc.title }}">
+                    {{ doc.title }}
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem;">
+                    {{ doc.file_type | upper }} &bull; {{ (doc.file_size / 1024) | round(1) }} KB &bull; {{ doc.created_at.strftime('%b %d, %Y') if doc.created_at else 'Today' }}
+                </div>
+            </div>
+            {% if doc.report %}
+            <div class="score-pill {% if doc.report.overall_score >= 90 %}badge-success{% elif doc.report.overall_score >= 70 %}badge-warning{% else %}badge-danger{% endif %}">
+                {{ doc.report.overall_score }}%
+            </div>
+            {% endif %}
+        </div>
+
+        {% if doc.report %}
+        <!-- Score bars -->
+        <div style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem;">
+            {% for label, val, color in [
+                ('Grammar', doc.report.grammar_score, 'var(--accent-emerald)'),
+                ('Spelling', doc.report.spelling_score, 'var(--accent-amber)'),
+                ('Formatting', doc.report.formatting_score, 'var(--primary)')
+            ] %}
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 0.72rem; color: var(--text-muted); width: 64px; flex-shrink: 0;">{{ label }}</span>
+                <div style="flex: 1; height: 5px; background: var(--border-color); border-radius: 99px; overflow: hidden;">
+                    <div style="height: 100%; width: {{ val }}%; background: {{ color }}; border-radius: 99px;"></div>
+                </div>
+                <span style="font-size: 0.72rem; color: var(--text-muted); width: 38px; text-align: right;">{{ val }}%</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            <span style="display: flex; align-items: center; gap: 0.2rem;"><i data-lucide="align-left" style="width: 12px;"></i> {{ doc.report.word_count }}w</span>
+            <span style="display: flex; align-items: center; gap: 0.2rem;"><i data-lucide="minus" style="width: 12px;"></i> {{ doc.report.sentence_count }}s</span>
+            <span style="display: flex; align-items: center; gap: 0.2rem;"><i data-lucide="clock" style="width: 12px;"></i> ~{{ doc.report.estimated_reading_time }}m</span>
+        </div>
+        {% endif %}
+
+        <div class="doc-card-actions">
+            <a href="{{ url_for('document.studio', doc_id=doc.id) }}" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full);">
+                <i data-lucide="edit-2"></i> Open Studio
+            </a>
+            <a href="{{ url_for('history.export_doc', doc_id=doc.id, format_type='pdf') }}" class="btn btn-secondary btn-icon btn-sm" title="Download PDF" style="border-radius: var(--radius-full);">
+                <i data-lucide="file-text" style="width: 14px;"></i>
+            </a>
+            <a href="{{ url_for('history.export_doc', doc_id=doc.id, format_type='docx') }}" class="btn btn-secondary btn-icon btn-sm" title="Download DOCX" style="border-radius: var(--radius-full);">
+                <i data-lucide="file-type-2" style="width: 14px;"></i>
+            </a>
+            <form action="{{ url_for('history.delete_doc', doc_id=doc.id) }}" method="POST" style="margin-left: auto;" onsubmit="return confirm('Move this document to trash?');">
+                <button type="submit" class="btn btn-icon btn-sm" style="background: var(--accent-crimson-bg); color: var(--accent-crimson); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-full);" title="Delete">
+                    <i data-lucide="trash-2" style="width: 14px;"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<!-- Empty State -->
+<div style="text-align: center; padding: 6rem 1rem;">
+    <div style="font-size: 5rem; opacity: 0.25; margin-bottom: 1.5rem; display: flex; justify-content: center;"><i data-lucide="folder-open" style="width: 80px; height: 80px;"></i></div>
+    <h3 style="font-size: 1.5rem; color: var(--text-secondary);">
+        {% if query_str %}No documents matching "{{ query_str }}"{% else %}No documents yet{% endif %}
+    </h3>
+    <p style="color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 2rem;">
+        {% if query_str %}Try a different search or clear filters.{% else %}Upload your first document to get started with AI correction.{% endif %}
+    </p>
+    <a href="{{ url_for('document.upload') }}" class="btn btn-primary" style="border-radius: var(--radius-full);">
+        <i data-lucide="upload-cloud"></i> Upload First Document
+    </a>
+</div>
+{% endif %}
+{% endblock %}

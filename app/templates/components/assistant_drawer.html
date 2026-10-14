@@ -1,0 +1,58 @@
+<!-- Floating AI Assistant Drawer -->
+<div class="ai-orb-container" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 99;">
+    <div class="ai-orb-ring"></div>
+    <div class="ai-orb-ring"></div>
+    <button type="button" class="ai-orb-btn" id="assistantTriggerBtn" title="Open Palgrim AI Assistant">
+        <i data-lucide="bot"></i>
+        <span class="premium-badge" style="top: 0; right: 0;">1</span>
+    </button>
+</div>
+
+<div class="glass-card premium-glass ai-assistant-drawer" id="aiAssistantDrawer">
+    <div class="assistant-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div class="brand-icon" style="width: 28px; height: 28px; font-size: 0.8rem;">
+                <i data-lucide="wand-2"></i>
+            </div>
+            <strong>Palgrim AI Assistant</strong>
+        </div>
+        <button type="button" class="btn btn-secondary btn-icon btn-sm" id="closeAssistantBtn">
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+
+    <div style="padding: 0.5rem 1rem; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.4rem; overflow-x: auto; background: rgba(0,0,0,0.02);">
+        <button class="badge badge-info prompt-chip" data-prompt="Rewrite paragraph formally" style="cursor: pointer;">Rewrite Formal</button>
+        <button class="badge badge-info prompt-chip" data-prompt="Summarize this document" style="cursor: pointer;">Summarize</button>
+        <button class="badge badge-info prompt-chip" data-prompt="Translate to French" style="cursor: pointer;">Translate</button>
+        <button class="badge badge-info prompt-chip" data-prompt="Generate Executive Email" style="cursor: pointer;">Email</button>
+    </div>
+
+    <div class="assistant-messages" id="assistantMessages">
+        <div class="chat-bubble chat-bubble-ai">
+            Hello! I am your Palgrim AI Assistant. I can help rewrite paragraphs, summarize text, fix grammar, translate, or generate formal emails and reports. How can I assist your document today?
+        </div>
+    </div>
+
+    <div class="assistant-input-area" style="position: relative;">
+        <div style="display: flex; gap: 0.5rem; align-items: center; width: 100%;">
+            <input type="text" class="form-control" id="assistantInput" placeholder="Ask AI to rewrite, summarize, translate..." style="font-size: 0.85rem; border-radius: 20px; padding-right: 40px; background: rgba(255,255,255,0.05);">
+            <i data-lucide="mic" style="position: absolute; right: 55px; color: var(--theme-primary); cursor: pointer; width: 18px;" class="voice-mic-icon"></i>
+            <button type="button" class="btn btn-premium btn-sm ripple-btn" id="sendAssistantMsgBtn" style="border-radius: 50%; width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i data-lucide="send" style="width: 16px; height: 16px; margin-left: -2px;"></i>
+            </button>
+        </div>
+        <div class="typing-indicator" style="display: none; padding: 0.5rem; font-size: 0.75rem; color: var(--theme-primary); align-items: center; gap: 0.25rem;">
+            <span>AI is thinking</span>
+            <span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span>
+        </div>
+    </div>
+</div>
+
+<style>
+.typing-indicator span { animation: blink 1.4s infinite both; }
+.typing-indicator .dot-2 { animation-delay: 0.2s; }
+.typing-indicator .dot-3 { animation-delay: 0.4s; }
+@keyframes blink { 0% { opacity: 0.2; } 20% { opacity: 1; } 100% { opacity: 0.2; } }
+.voice-mic-icon:hover { color: #ef4444 !important; }
+</style>

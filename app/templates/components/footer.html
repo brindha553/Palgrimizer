@@ -1,0 +1,47 @@
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <a href="{{ url_for('main.index') }}" class="nav-brand">
+                <div class="brand-icon">
+                    <i data-lucide="sparkles"></i>
+                </div>
+                <span>Palgrimizer<span style="color: var(--primary);">.ai</span></span>
+            </a>
+            <p>Enterprise AI Document Correction Platform. Automating grammar, formatting, readability, and structural perfection for enterprise teams worldwide.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Product</h4>
+            <ul>
+                <li><a href="{{ url_for('main.features') }}">AI Analysis Engine</a></li>
+                <li><a href="{{ url_for('document.upload') }}">Document Upload</a></li>
+                <li><a href="{{ url_for('main.pricing') }}">Enterprise Pricing</a></li>
+                <li><a href="{{ url_for('main.features') }}">OCR Scanner</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Solutions</h4>
+            <ul>
+                <li><a href="{{ url_for('main.about') }}">Academic Research</a></li>
+                <li><a href="{{ url_for('main.about') }}">Legal Contracts</a></li>
+                <li><a href="{{ url_for('main.about') }}">Corporate Publishing</a></li>
+                <li><a href="{{ url_for('main.about') }}">Localization</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Company</h4>
+            <ul>
+                <li><a href="{{ url_for('main.about') }}">About Us</a></li>
+                <li><a href="{{ url_for('main.contact') }}">Contact Support</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div>&copy; 2026 Palgrimizer AI Technologies Inc. All rights reserved.</div>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <span class="badge badge-success"><i data-lucide="activity" style="width: 14px; height: 14px;"></i> All Systems Operational</span>
+            <span style="color: var(--text-muted);">v2.4.0-enterprise</span>
+        </div>
+    </div>
+</footer>

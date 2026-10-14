@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Contact | Palgrimizer AI{% endblock %}
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3rem;">
+        <span class="badge badge-info" style="margin-bottom: 1rem;">Get In Touch</span>
+        <h1 style="font-size: 2.4rem;">Contact Our Team</h1>
+        <p style="color: var(--text-secondary); margin-top: 0.75rem;">Have questions about enterprise licensing or need help? We respond within 24 hours.</p>
+    </div>
+
+    <div class="glass-card" style="padding: 2.5rem;">
+        <form id="contactForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                <div class="form-group">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" class="form-control" name="name" required placeholder="Alexander Vance">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Work Email</label>
+                    <input type="email" class="form-control" name="email" required placeholder="name@company.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Subject</label>
+                <input type="text" class="form-control" name="subject" placeholder="Enterprise Licensing Inquiry">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Message</label>
+                <textarea class="form-control" name="message" rows="6" required placeholder="Tell us about your document correction needs..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem;">
+                <i data-lucide="send"></i> Send Message
+            </button>
+        </form>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2rem;">
+        <div class="glass-card" style="padding: 1.25rem; text-align: center;">
+            <div class="stat-icon" style="margin: 0 auto 0.75rem auto; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;"><i data-lucide="mail"></i></div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">support@palgrimizer.ai</div>
+        </div>
+        <div class="glass-card" style="padding: 1.25rem; text-align: center;">
+            <div class="stat-icon" style="margin: 0 auto 0.75rem auto; background: var(--accent-emerald-bg); color: var(--accent-emerald); font-size: 1.2rem; display: flex; align-items: center; justify-content: center;"><i data-lucide="headphones"></i></div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">24/7 Enterprise Support</div>
+        </div>
+        <div class="glass-card" style="padding: 1.25rem; text-align: center;">
+            <div class="stat-icon" style="margin: 0 auto 0.75rem auto; background: var(--accent-amber-bg); color: var(--accent-amber); font-size: 1.2rem; display: flex; align-items: center; justify-content: center;"><i data-lucide="building"></i></div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Palgrimizer AI HQ</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('contactForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = Object.fromEntries(new FormData(form));
+    try {
+        const res = await fetch('/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+            window.showToast(result.message, 'success');
+            form.reset();
+        }
+    } catch(e) {
+        window.showToast('Failed to send message. Please try again.', 'danger');
+    }
+});
+</script>
+{% endblock %}

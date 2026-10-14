@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}Profile & Settings | Palgrimizer AI{% endblock %}
+
+{% block extra_css %}
+<style>
+.settings-layout { display: grid; grid-template-columns: 240px 1fr; gap: 2rem; align-items: start; }
+.settings-nav { display: flex; flex-direction: column; gap: 0.3rem; }
+.settings-nav-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1rem; border-radius: var(--radius-sm); font-weight: 500; font-size: 0.9rem; color: var(--text-secondary); cursor: pointer; border: none; background: none; width: 100%; text-align: left; transition: all var(--transition-fast); }
+.settings-nav-link:hover, .settings-nav-link.active { background: var(--primary-light); color: var(--primary); }
+.settings-section { display: none; }
+.settings-section.active { display: block; }
+.avatar-ring { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: white; font-weight: 800; box-shadow: 0 6px 20px var(--primary-glow); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-size: 1.9rem;">Profile & Settings</h1>
+    <p style="color: var(--text-secondary); margin-top: 0.25rem;">Manage your account, preferences, and security settings.</p>
+</div>
+
+<div class="settings-layout">
+    <!-- Sidebar Navigation -->
+    <div class="glass-card" style="padding: 1.25rem;">
+        <!-- Avatar -->
+        <div style="text-align: center; padding: 1.5rem 0 1.25rem 0; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem;">
+            <div class="avatar-ring" style="margin: 0 auto 0.85rem auto;">
+                {{ user.full_name[0].upper() }}
+            </div>
+            <div style="font-weight: 700; font-size: 0.95rem;">{{ user.full_name }}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">{{ user.email }}</div>
+            <span class="badge badge-info" style="margin-top: 0.5rem;">{{ user.plan | title }} Plan</span>
+        </div>
+
+        <nav class="settings-nav">
+            <button class="settings-nav-link active" data-section="profile">
+                <i data-lucide="user" style="width: 16px;"></i> Profile
+            </button>
+            <button class="settings-nav-link" data-section="security">
+                <i data-lucide="shield" style="width: 16px;"></i> Security
+            </button>
+            <button class="settings-nav-link" data-section="preferences">
+                <i data-lucide="sliders" style="width: 16px;"></i> Preferences
+            </button>
+            <button class="settings-nav-link" data-section="activity">
+                <i data-lucide="history" style="width: 16px;"></i> Activity
+            </button>
+        </nav>
+    </div>
+
+    <!-- Settings Panels -->
+    <div>
+        <!-- Profile Section -->
+        <div class="settings-section active glass-card" id="section-profile" style="padding: 2rem;">
+            <h3 style="margin-bottom: 1.75rem; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="user" style="color: var(--primary);"></i>Profile Information</h3>
+            <form action="{{ url_for('api.settings') }}" method="POST">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="full_name" class="form-control" value="{{ user.full_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control" value="{{ user.email }}" disabled style="opacity: 0.7;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subscription Plan</label>
+                        <input type="text" class="form-control" value="{{ user.plan | title }} Plan" disabled style="opacity: 0.7;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Member Since</label>
+                        <input type="text" class="form-control" value="{{ user.created_at.strftime('%B %d, %Y') if user.created_at else 'Today' }}" disabled style="opacity: 0.7;">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem; border-radius: var(--radius-full);">
+                    <i data-lucide="save"></i> Save Profile
+                </button>
+            </form>
+        </div>
+
+        <!-- Security Section -->
+        <div class="settings-section glass-card" id="section-security" style="padding: 2rem;">
+            <h3 style="margin-bottom: 1.75rem; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="shield" style="color: var(--primary);"></i>Security Settings</h3>
+            <form action="{{ url_for('api.settings') }}" method="POST">
+                <div class="form-group">
+                    <label class="form-label">Current Password</label>
+                    <input type="password" name="current_password" class="form-control" placeholder="Enter your current password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" name="new_password" class="form-control" placeholder="Enter strong new password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-control" placeholder="Re-enter new password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="border-radius: var(--radius-full);">
+                    <i data-lucide="key"></i> Update Password
+                </button>
+            </form>
+        </div>
+
+        <!-- Preferences Section -->
+        <div class="settings-section glass-card" id="section-preferences" style="padding: 2rem;">
+            <h3 style="margin-bottom: 1.75rem; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="sliders" style="color: var(--primary);"></i>Preferences</h3>
+            <div class="form-group">
+                <label class="form-label">Interface Theme</label>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button class="btn btn-secondary theme-toggle-btn" style="border-radius: var(--radius-full);">
+                        <i data-lucide="moon"></i> Toggle Dark / Light Mode
+                    </button>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <label class="form-label">Preferred Language</label>
+                <select class="form-control" style="max-width: 320px;">
+                    <option>English (en)</option>
+                    <option>French (fr)</option>
+                    <option>German (de)</option>
+                    <option>Spanish (es)</option>
+                    <option>Hindi (hi)</option>
+                    <option>Tamil (ta)</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 1rem; border-radius: var(--radius-full);">
+                <i data-lucide="save"></i> Save Preferences
+            </button>
+        </div>
+
+        <!-- Activity Section -->
+        <div class="settings-section glass-card" id="section-activity" style="padding: 2rem;">
+            <h3 style="margin-bottom: 1.75rem; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="history" style="color: var(--primary);"></i>Account Activity</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                All logins and actions associated with your account are tracked here for security monitoring.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--bg-input); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span class="badge badge-success"><i data-lucide="log-in" style="width: 14px;"></i> Login</span>
+                        <span style="font-size: 0.9rem;">Logged in via Web</span>
+                    </div>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Today, Just now</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--bg-input); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span class="badge badge-info"><i data-lucide="upload-cloud" style="width: 14px;"></i> Upload</span>
+                        <span style="font-size: 0.9rem;">Document uploaded & analyzed</span>
+                    </div>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Today</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.settings-nav-link').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.settings-nav-link').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        const sec = document.getElementById('section-' + btn.getAttribute('data-section'));
+        if (sec) sec.classList.add('active');
+    });
+});
+</script>
+{% endblock %}

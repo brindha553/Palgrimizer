@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Palgrimizer AI{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ==========================================================================
+   PREMIUM DASHBOARD OVERHAUL
+   ========================================================================== */
+
+/* Typography & Layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+/* Glassmorphism & Premium Cards */
+.premium-glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 1.75rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.premium-glass-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    border-color: rgba(34, 211, 238, 0.3);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34, 211, 238, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.premium-glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+    transform: skewX(-20deg);
+    transition: 0.7s;
+}
+.premium-glass-card:hover::before { left: 150%; }
+
+/* Ambient Backgrounds */
+.aurora-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden; background: #0b0f19;
+}
+.aurora-mesh {
+    position: absolute; inset: -50%; width: 200%; height: 200%;
+    background: 
+        radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+    animation: rotateAurora 60s linear infinite;
+}
+@keyframes rotateAurora { 100% { transform: rotate(360deg); } }
+
+.tiny-stars { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.3) 1px, transparent 1px); background-size: 50px 50px; animation: twinkle 4s infinite alternate; }
+@keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
+
+/* Hero Dashboard 3D Scene */
+.hero-dashboard {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 4rem; position: relative; min-height: 450px;
+}
+.hero-dashboard-left { flex: 1.2; max-width: 550px; z-index: 10; animation: fadeSlideRight 1s ease-out forwards; }
+.hero-dashboard-right {
+    flex: 1; position: relative; height: 450px; display: flex; align-items: center; justify-content: center;
+    perspective: 1200px; z-index: 5; animation: fadeSlideLeft 1s ease-out forwards;
+}
+
+/* 3D Asset Integrations */
+/* AI center icon replaces robot image */
+.ai-center-icon {
+    position: relative; width: 200px; height: 200px;
+    animation: realFloat 6s ease-in-out infinite; z-index: 10;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 40% 40%, rgba(34,211,238,0.18) 0%, rgba(139,92,246,0.12) 60%, transparent 100%);
+    border-radius: 50%;
+    filter: drop-shadow(0 20px 35px rgba(0,0,0,0.4)) drop-shadow(0 0 40px rgba(34,211,238,0.25));
+}
+
+.hologram-platform {
+    position: absolute; bottom: 20px; width: 350px; height: 80px; border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(34, 211, 238, 0.4) 0%, transparent 70%);
+    border: 2px solid rgba(34, 211, 238, 0.15); transform: rotateX(75deg);
+    box-shadow: 0 0 60px rgba(34, 211, 238, 0.3), inset 0 0 20px rgba(34,211,238,0.5);
+    animation: pulsePlatform 4s infinite ease-in-out;
+}
+
+/* Orbiting Objects */
+.orbit-container { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; animation: orbitRotate 40s linear infinite; z-index: 8; }
+.floating-obj-img {
+    position: absolute; top: 50%; left: 50%; width: 70px; height: 70px; margin: -35px 0 0 -35px;
+    display: flex; align-items: center; justify-content: center; transform-style: preserve-3d;
+    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.4)); animation: counterRotate 40s linear infinite, objFloat 4s ease-in-out infinite;
+}
+.floating-obj-img img { width: 100%; height: 100%; object-fit: contain; }
+
+.obj-pdf { transform: rotateY(0deg) translateZ(260px) rotateY(0deg); animation-delay: 0s; }
+.obj-docx { transform: rotateY(51deg) translateZ(240px) rotateY(-51deg); animation-delay: -0.5s; }
+.obj-txt { transform: rotateY(102deg) translateZ(270px) rotateY(-102deg); animation-delay: -1s; }
+.obj-ocr { transform: rotateY(153deg) translateZ(250px) rotateY(-153deg); animation-delay: -1.5s; }
+.obj-voice { transform: rotateY(204deg) translateZ(280px) rotateY(-204deg); animation-delay: -2s; }
+.obj-brain { transform: rotateY(255deg) translateZ(230px) rotateY(-255deg); animation-delay: -2.5s; }
+.obj-analytics { transform: rotateY(306deg) translateZ(260px) rotateY(-306deg); animation-delay: -3s; }
+
+/* Missing asset fallback styling */
+.fallback-icon {
+    width: 60px; height: 60px; background: rgba(15,23,42,0.6); backdrop-filter: blur(10px);
+    border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.fallback-icon i { width: 30px; height: 30px; }
+
+@keyframes orbitRotate { 100% { transform: rotateY(360deg); } }
+@keyframes counterRotate { 100% { transform: rotateY(-360deg); } }
+@keyframes realFloat { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-25px) rotate(2deg); } }
+@keyframes objFloat { 0%, 100% { margin-top: -35px; } 50% { margin-top: -45px; } }
+@keyframes pulsePlatform { 0%, 100% { opacity: 0.6; transform: rotateX(75deg) scale(1); } 50% { opacity: 1; transform: rotateX(75deg) scale(1.15); box-shadow: 0 0 80px rgba(34, 211, 238, 0.5); } }
+
+/* Button Premium Enhancements */
+.btn-magnetic {
+    position: relative; overflow: hidden; transition: all 0.3s ease; z-index: 1;
+    box-shadow: 0 10px 25px rgba(34, 211, 238, 0.3);
+}
+.btn-magnetic::after {
+    content: ''; position: absolute; top: 50%; left: 50%; width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+    transform: translate(-50%, -50%) scale(0); opacity: 0; transition: transform 0.5s ease, opacity 0.5s ease; z-index: -1;
+}
+.btn-magnetic:hover::after { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+.btn-magnetic:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(34, 211, 238, 0.5); }
+
+/* Quick Actions */
+.quick-action-list { display: flex; flex-direction: column; gap: 1rem; }
+.quick-card {
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px;
+    padding: 1.25rem; display: flex; align-items: center; gap: 1.25rem; color: white; text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden;
+}
+.quick-card:hover {
+    background: rgba(255,255,255,0.06); border-color: rgba(34, 211, 238, 0.4);
+    transform: translateX(8px); box-shadow: 0 10px 25px rgba(34, 211, 238, 0.15);
+}
+.quick-icon-wrapper {
+    width: 48px; height: 48px; border-radius: 14px; background: rgba(34, 211, 238, 0.1);
+    display: flex; align-items: center; justify-content: center; color: #22d3ee;
+    transition: transform 0.4s ease; border: 1px solid rgba(34, 211, 238, 0.2);
+}
+.quick-card:hover .quick-icon-wrapper { transform: scale(1.15) rotate(5deg); background: rgba(34, 211, 238, 0.2); box-shadow: 0 0 15px rgba(34,211,238,0.4); }
+
+/* Document Rows */
+.premium-doc-row {
+    display: flex; align-items: center; justify-content: space-between; padding: 1.25rem;
+    border-radius: 16px; border: 1px solid transparent; transition: all 0.3s ease;
+    margin-bottom: 0.5rem; background: rgba(255,255,255,0.01);
+}
+.premium-doc-row:hover {
+    background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1);
+    transform: scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+.doc-thumbnail {
+    width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Activity Timeline */
+.timeline-modern { position: relative; padding-left: 2rem; margin-top: 1rem; }
+.timeline-modern::before {
+    content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px;
+    background: linear-gradient(to bottom, var(--primary), transparent); opacity: 0.5;
+}
+.timeline-item-modern { position: relative; margin-bottom: 1.5rem; transition: transform 0.3s ease; }
+.timeline-item-modern:hover { transform: translateX(5px); }
+.timeline-dot-glowing {
+    position: absolute; left: -2rem; top: 0.2rem; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--primary); box-shadow: 0 0 15px var(--primary);
+    border: 3px solid var(--bg-card); animation: pulseDot 2s infinite;
+}
+@keyframes pulseDot { 0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(34, 211, 238, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); } }
+
+/* AI Assistant Floating Button */
+.ai-assistant-floater {
+    position: fixed; bottom: 40px; right: 40px; z-index: 100; cursor: pointer;
+    width: 70px; height: 70px; border-radius: 50%;
+    background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
+    border: 1px solid rgba(34, 211, 238, 0.4);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 15px 35px rgba(34, 211, 238, 0.3);
+    animation: realFloat 4s ease-in-out infinite; transition: all 0.3s ease; color: #22d3ee;
+}
+.ai-assistant-floater:hover { transform: scale(1.1); box-shadow: 0 20px 45px rgba(34, 211, 238, 0.6); }
+.ai-tooltip {
+    position: absolute; right: 90px; background: rgba(255,255,255,0.95); color: #0f172a;
+    padding: 0.75rem 1.25rem; border-radius: 16px 16px 0 16px; font-weight: 600; font-size: 0.9rem;
+    opacity: 0; transform: translateX(20px); transition: all 0.3s ease; pointer-events: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); white-space: nowrap;
+}
+.ai-assistant-floater:hover .ai-tooltip { opacity: 1; transform: translateX(0); }
+
+/* Circular Progress */
+.progress-ring { transform: rotate(-90deg); transform-origin: 50% 50%; }
+.progress-ring-circle { stroke: url(#gradient); transition: stroke-dashoffset 1s ease-in-out; }
+
+/* Custom Cursor Effects */
+body { cursor: none; }
+.custom-cursor {
+    position: fixed; top: 0; left: 0; width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(34, 211, 238, 0.5); pointer-events: none; z-index: 9999;
+    mix-blend-mode: screen; transform: translate(-50%, -50%);
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.8), 0 0 40px rgba(34, 211, 238, 0.4);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+}
+.custom-cursor.hovering { width: 40px; height: 40px; background: rgba(139, 92, 246, 0.4); box-shadow: 0 0 30px rgba(139, 92, 246, 0.8); }
+
+/* Entry Animations */
+@keyframes fadeSlideRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes fadeSlideLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.stagger-1 { animation: fadeSlideUp 0.8s ease-out 0.2s forwards; opacity: 0; }
+.stagger-2 { animation: fadeSlideUp 0.8s ease-out 0.4s forwards; opacity: 0; }
+.stagger-3 { animation: fadeSlideUp 0.8s ease-out 0.6s forwards; opacity: 0; }
+.stagger-4 { animation: fadeSlideUp 0.8s ease-out 0.8s forwards; opacity: 0; }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Premium Ambient Background -->
+<div class="aurora-bg">
+    <div class="aurora-mesh"></div>
+    <div class="tiny-stars"></div>
+</div>
+
+<div class="custom-cursor" id="customCursor"></div>
+
+<!-- Hero Section with Real 3D Assets -->
+<div class="hero-dashboard">
+    <div class="hero-dashboard-left">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.3); border-radius: 99px; color: #22d3ee; font-weight: 600; font-size: 0.85rem; margin-bottom: 1.5rem; box-shadow: 0 0 20px rgba(34,211,238,0.2);">
+            <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i> Palgrimizer Enterprise
+        </div>
+        <h1 style="font-size: 3.2rem; margin-bottom: 1rem; line-height: 1.1; letter-spacing: -0.02em;">
+            Elevate your work,<br/><span class="gradient-text">{{ user.full_name.split()[0] }}</span> <span style="display:inline-block; animation: wave 2.5s infinite transform-origin: 70% 70%;">👋</span>
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.15rem; max-width: 420px; margin-bottom: 2.5rem; line-height: 1.6;">
+            Your intelligent AI workspace is ready. Experience lightning-fast document processing and unparalleled insights.
+        </p>
+        <div style="display: flex; gap: 1rem;">
+            <a href="{{ url_for('document.upload') }}" class="btn btn-primary btn-magnetic" style="border-radius: 99px; padding: 1rem 2rem; font-size: 1.05rem; font-weight: 600;">
+                <i data-lucide="upload-cloud"></i> Upload Document
+            </a>
+            <a href="{{ url_for('history.index') }}" class="btn btn-outline" style="border-radius: 99px; padding: 1rem 2rem; font-size: 1.05rem; font-weight: 600; background: rgba(255,255,255,0.05); backdrop-filter: blur(5px);">
+                <i data-lucide="folder"></i> Library
+            </a>
+        </div>
+    </div>
+
+    <div class="hero-dashboard-right">
+        <div class="orbit-container">
+            <div class="floating-obj-img obj-pdf"><img src="{{ url_for('static', filename='images/pdf_icon.png') }}" alt="PDF"></div>
+            <div class="floating-obj-img obj-docx"><img src="{{ url_for('static', filename='images/docx_icon.png') }}" alt="DOCX"></div>
+            
+            <div class="floating-obj-img obj-txt">
+                <div class="fallback-icon" style="color: #10b981; border-color: rgba(16,185,129,0.3); box-shadow: 0 0 20px rgba(16,185,129,0.2);"><i data-lucide="file-text"></i></div>
+            </div>
+            
+            <div class="floating-obj-img obj-ocr"><img src="{{ url_for('static', filename='images/ocr_icon.png') }}" alt="OCR"></div>
+            <div class="floating-obj-img obj-voice"><img src="{{ url_for('static', filename='images/voice_icon.png') }}" alt="Voice"></div>
+            <div class="floating-obj-img obj-brain"><img src="{{ url_for('static', filename='images/ai_brain.png') }}" alt="Brain"></div>
+            <div class="floating-obj-img obj-analytics"><img src="{{ url_for('static', filename='images/analytics_icon.png') }}" alt="Analytics"></div>
+        </div>
+
+        <div class="ai-center-icon">
+            <i data-lucide="cpu" style="width: 90px; height: 90px; color: #22d3ee; filter: drop-shadow(0 0 20px rgba(34,211,238,0.6));"></i>
+        </div>
+        <div class="hologram-platform"></div>
+    </div>
+</div>
+
+<!-- Premium Stats Grid -->
+<div class="dashboard-grid stagger-1">
+    <div class="premium-glass-card" style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <div class="stat-value" style="font-size: 2.75rem; font-weight: 800; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ total_docs }}</div>
+            <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Total Documents</div>
+        </div>
+        <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.2); display: flex; align-items: center; justify-content: center; color: #22d3ee; box-shadow: 0 0 20px rgba(34,211,238,0.2);">
+            <i data-lucide="files" style="width: 32px; height: 32px;"></i>
+        </div>
+    </div>
+    
+    <div class="premium-glass-card" style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <div class="stat-value" style="font-size: 2.75rem; font-weight: 800; background: linear-gradient(135deg, #10b981, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ avg_score }}%</div>
+            <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Quality Score</div>
+        </div>
+        <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); display: flex; align-items: center; justify-content: center; color: #10b981; box-shadow: 0 0 20px rgba(16,185,129,0.2);">
+            <i data-lucide="check-circle-2" style="width: 32px; height: 32px;"></i>
+        </div>
+    </div>
+    
+    <div class="premium-glass-card" style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <div class="stat-value" style="font-size: 2.75rem; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ avg_grammar }}%</div>
+            <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Grammar Score</div>
+        </div>
+        <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); display: flex; align-items: center; justify-content: center; color: #f59e0b; box-shadow: 0 0 20px rgba(245,158,11,0.2);">
+            <i data-lucide="spell-check" style="width: 32px; height: 32px;"></i>
+        </div>
+    </div>
+
+    <div class="premium-glass-card" style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <div class="stat-value" style="font-size: 2.75rem; font-weight: 800; background: linear-gradient(135deg, #8b5cf6, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ avg_readability }}%</div>
+            <div style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Readability</div>
+        </div>
+        <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; color: #8b5cf6; box-shadow: 0 0 20px rgba(139,92,246,0.2);">
+            <i data-lucide="book-open" style="width: 32px; height: 32px;"></i>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; margin-bottom: 2.5rem;">
+    <!-- Recent Documents -->
+    <div class="premium-glass-card stagger-2" style="padding: 2rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+            <h3 style="display: flex; align-items: center; gap: 0.75rem; font-size: 1.3rem;"><i data-lucide="folder-clock" style="color: #22d3ee;"></i> Recent Documents</h3>
+            <a href="{{ url_for('history.index') }}" class="btn btn-outline" style="border-radius: 99px; padding: 0.5rem 1.25rem; font-size: 0.85rem;">View All</a>
+        </div>
+
+        {% if recent_docs %}
+            {% for doc in recent_docs %}
+            <div class="premium-doc-row">
+                <div style="display: flex; align-items: center; gap: 1.25rem; flex: 1;">
+                    <div class="doc-thumbnail" style="{% if doc.file_type == 'pdf' %}color: #ef4444;{% elif doc.file_type == 'docx' %}color: #38bdf8;{% else %}color: #10b981;{% endif %}">
+                        <i data-lucide="{% if doc.file_type == 'pdf' %}file-text{% elif doc.file_type == 'docx' %}file-type-2{% else %}file{% endif %}" style="width: 24px; height: 24px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.5rem;">
+                            {{ doc.title }}
+                            {% if doc.report and doc.report.overall_score >= 90 %}
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; background: rgba(16,185,129,0.2); border-radius: 50%; color: #10b981;" title="High Quality">
+                                <i data-lucide="check" style="width: 12px; height: 12px;"></i>
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
+                            <i data-lucide="clock" style="width: 12px; height: 12px;"></i> {{ doc.created_at.strftime('%b %d, %Y') if doc.created_at else 'Today' }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 1.25rem;">
+                    {% if doc.report %}
+                    <!-- Premium SVG Ring -->
+                    <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+                        <svg width="44" height="44" class="progress-ring">
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#22d3ee" />
+                                    <stop offset="100%" stop-color="#8b5cf6" />
+                                </linearGradient>
+                            </defs>
+                            <circle stroke="rgba(255,255,255,0.1)" stroke-width="4" fill="transparent" r="18" cx="22" cy="22"/>
+                            <circle class="progress-ring-circle" stroke-width="4" stroke-dasharray="113" stroke-dashoffset="{{ 113 - (113 * doc.report.overall_score / 100) }}" stroke-linecap="round" fill="transparent" r="18" cx="22" cy="22"/>
+                        </svg>
+                        <span style="position: absolute; font-size: 0.75rem; font-weight: 700;">{{ doc.report.overall_score }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="{{ url_for('document.studio', doc_id=doc.id) }}" class="btn btn-outline" style="border-radius: 12px; padding: 0.5rem; background: rgba(255,255,255,0.05);" title="Open Studio">
+                            <i data-lucide="edit-3" style="width: 18px; height: 18px;"></i>
+                        </a>
+                        <a href="{{ url_for('history.export_doc', doc_id=doc.id, format_type='pdf') }}" class="btn btn-primary" style="border-radius: 12px; padding: 0.5rem;" title="Download PDF">
+                            <i data-lucide="download" style="width: 18px; height: 18px;"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div style="text-align: center; padding: 4rem 1rem;">
+                <div style="display: inline-flex; justify-content: center; align-items: center; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.05); margin-bottom: 1.5rem;">
+                    <i data-lucide="file-x" style="width: 40px; height: 40px; color: var(--text-muted);"></i>
+                </div>
+                <h4 style="margin-bottom: 0.5rem;">No documents found</h4>
+                <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">Start by uploading your first document to unlock AI insights.</p>
+                <a href="{{ url_for('document.upload') }}" class="btn btn-primary btn-magnetic" style="border-radius: 99px;">Upload Document</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Side Panel (Quick Actions & Activity) -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- Quick Actions -->
+        <div class="premium-glass-card stagger-3" style="padding: 1.75rem;">
+            <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 1.25rem;">Quick Actions</h4>
+            <div class="quick-action-list">
+                <a href="{{ url_for('document.upload') }}" class="quick-card">
+                    <div class="quick-icon-wrapper"><i data-lucide="upload-cloud"></i></div>
+                    <div style="font-weight: 600; font-size: 1.05rem;">Upload Document</div>
+                </a>
+                <a href="{{ url_for('history.index') }}" class="quick-card">
+                    <div class="quick-icon-wrapper" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; border-color: rgba(139,92,246,0.2);"><i data-lucide="folder-search"></i></div>
+                    <div style="font-weight: 600; font-size: 1.05rem;">Browse Library</div>
+                </a>
+                <a href="{{ url_for('api.settings') }}" class="quick-card">
+                    <div class="quick-icon-wrapper" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-color: rgba(245,158,11,0.2);"><i data-lucide="settings"></i></div>
+                    <div style="font-weight: 600; font-size: 1.05rem;">Preferences</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="premium-glass-card stagger-4" style="flex: 1; padding: 1.75rem;">
+            <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="activity"></i> Recent Activity
+            </h4>
+            <div class="timeline-modern">
+            {% if activities %}
+                {% for activity in activities %}
+                <div class="timeline-item-modern">
+                    <div class="timeline-dot-glowing"></div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.2rem;">{{ activity.action }}</div>
+                        {% if activity.details %}<div style="font-size: 0.85rem; color: var(--text-muted);">{{ activity.details }}</div>{% endif %}
+                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.3rem;">
+                            <i data-lucide="clock" style="width: 12px; height: 12px;"></i> {{ activity.created_at.strftime('%b %d, %H:%M') if activity.created_at else '' }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: var(--text-muted); font-size: 0.9rem;">No recent activity.</p>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating AI Assistant -->
+<div class="ai-assistant-floater interactive-element">
+    <div class="ai-tooltip">Need help? Ask AI</div>
+    <i data-lucide="sparkles" style="width: 32px; height: 32px;"></i>
+</div>
+
+<style>
+@keyframes wave { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+// Custom Cursor Logic
+const cursor = document.getElementById('customCursor');
+document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+});
+const interactives = document.querySelectorAll('a, button, .interactive-element, .premium-glass-card');
+interactives.forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+});
+</script>
+{% endblock %}

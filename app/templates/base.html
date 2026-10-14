@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-color-theme="sunset-orange">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Palgrimizer | AI Enterprise Document Correction Platform{% endblock %}</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Enterprise-grade AI document correction platform. Automatically detect grammar, spelling, punctuation, layout alignment, typography, and readability issues.">
+    <meta name="keywords" content="AI document correction, grammar checker, document editor, proofreading AI, PDF correction, docx proofreader">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- CSS Design Tokens & Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/diff_viewer.css') }}">
+    
+    <!-- Premium UI Enhancements -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/premium-theme.css') }}">
+    
+    <!-- AOS CSS for scroll animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Premium Loading Screen -->
+    <div id="globalLoader" class="global-loader">
+        <div class="loader-logo">
+            <i data-lucide="sparkles"></i>
+        </div>
+        <div class="loader-bar-container">
+            <div class="loader-bar"></div>
+        </div>
+        <div style="color: rgba(255,255,255,0.5); margin-top: 1rem; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase;">Initializing AI Engine</div>
+    </div>
+
+    <!-- Advanced AI Search Overlay -->
+    <div id="aiSearchOverlay" class="ai-search-overlay">
+        <div class="ai-search-container">
+            <div class="ai-search-input-wrapper">
+                <i data-lucide="search" style="color: var(--theme-primary); margin-right: 1rem;"></i>
+                <input type="text" id="aiSearchInput" class="ai-search-input" placeholder="Ask AI or search documents...">
+                <i data-lucide="mic" style="color: rgba(255,255,255,0.4); cursor: pointer; margin-right: 1rem;"></i>
+                <span class="search-shortcut">ESC</span>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div style="font-size: 0.8rem; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 1rem; letter-spacing: 0.05em;">Suggested Searches</div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="#" style="display: flex; align-items: center; gap: 0.75rem; color: rgba(255,255,255,0.7); text-decoration: none; padding: 0.5rem; border-radius: 8px; transition: background 0.2s;"><i data-lucide="file-text" style="width: 16px; height: 16px;"></i> Latest corrected documents</a>
+                    <a href="#" style="display: flex; align-items: center; gap: 0.75rem; color: rgba(255,255,255,0.7); text-decoration: none; padding: 0.5rem; border-radius: 8px; transition: background 0.2s;"><i data-lucide="zap" style="width: 16px; height: 16px;"></i> Fix grammar in clipboard</a>
+                    <a href="#" style="display: flex; align-items: center; gap: 0.75rem; color: rgba(255,255,255,0.7); text-decoration: none; padding: 0.5rem; border-radius: 8px; transition: background 0.2s;"><i data-lucide="settings" style="width: 16px; height: 16px;"></i> Account settings</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ambient Glowing Background Grid -->
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-secondary"></div>
+
+    <!-- Sticky Enterprise Navbar -->
+    {% include 'components/navbar.html' %}
+
+    <!-- Premium Theme Customizer (Hidden Drawer) -->
+    <div id="themeCustomizer" class="glass-card premium-glass" style="position: fixed; top: 80px; right: 24px; z-index: 101; width: 320px; display: none; transform: translateY(-10px); opacity: 0; transition: all 0.3s ease;">
+        <h4 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="palette"></i> Premium Themes
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <button class="btn btn-secondary color-theme-selector" data-color="midnight-blue" style="justify-content: flex-start; background: rgba(255,255,255,0.05); border: none;">
+                <div style="width: 16px; height: 16px; border-radius: 50%; background: #4f74ff; box-shadow: 0 0 10px #4f74ff;"></div> Midnight Blue
+            </button>
+            <button class="btn btn-secondary color-theme-selector" data-color="cyber-purple" style="justify-content: flex-start; background: rgba(255,255,255,0.05); border: none;">
+                <div style="width: 16px; height: 16px; border-radius: 50%; background: #a855f7; box-shadow: 0 0 10px #a855f7;"></div> Cyber Purple
+            </button>
+            <button class="btn btn-secondary color-theme-selector" data-color="royal-blue" style="justify-content: flex-start; background: rgba(255,255,255,0.05); border: none;">
+                <div style="width: 16px; height: 16px; border-radius: 50%; background: #2563eb; box-shadow: 0 0 10px #2563eb;"></div> Royal Blue
+            </button>
+            <button class="btn btn-secondary color-theme-selector" data-color="sunset-orange" style="justify-content: flex-start; background: rgba(255,255,255,0.05); border: none;">
+                <div style="width: 16px; height: 16px; border-radius: 50%; background: #f97316; box-shadow: 0 0 10px #f97316;"></div> Sunset Orange
+            </button>
+            <button class="btn btn-secondary color-theme-selector" data-color="emerald-green" style="justify-content: flex-start; background: rgba(255,255,255,0.05); border: none;">
+                <div style="width: 16px; height: 16px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981;"></div> Emerald Green
+            </button>
+            <button class="btn btn-secondary color-theme-selector" data-color="neon-cyan" style="justify-content: flex-start; background: rgba(255,255,255,0.05); border: none;">
+                <div style="width: 16px; height: 16px; border-radius: 50%; background: #22d3ee; box-shadow: 0 0 10px #22d3ee;"></div> Neon Cyan
+            </button>
+        </div>
+    </div>
+
+    <!-- Flash Messages Container -->
+    <div class="main-wrapper" style="padding-top: 1rem; padding-bottom: 0; max-width: 1280px;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="glass-card" style="padding: 0.85rem 1.25rem; margin-bottom: 1rem; border-left: 4px solid var(--{% if category == 'success' %}accent-emerald{% elif category == 'danger' %}accent-crimson{% else %}primary{% endif %}); display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i data-lucide="{% if category == 'success' %}check-circle{% elif category == 'danger' %}alert-circle{% else %}info{% endif %}" class="text-{% if category == 'success' %}success{% elif category == 'danger' %}danger{% else %}primary{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                        <button onclick="this.parentElement.remove();" style="background: none; border: none; color: var(--text-muted); cursor: pointer;"><i data-lucide="x"></i></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content Block -->
+    <main class="main-wrapper">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Floating Toast Notifications Box -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Floating AI Assistant Drawer -->
+    {% include 'components/assistant_drawer.html' %}
+
+    <!-- Footer -->
+    {% include 'components/footer.html' %}
+
+    <!-- Core JavaScript Files -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/assistant.js') }}"></script>
+    
+    <!-- Premium UI Engine -->
+    <script src="{{ url_for('static', filename='js/premium-engine.js') }}"></script>
+    
+    <!-- GSAP for complex timelines -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- AOS for scroll reveals -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Initialize Lucide Icons -->
+    <script>
+      lucide.createIcons();
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

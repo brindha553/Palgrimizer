@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Pricing | Palgrimizer AI{% endblock %}
+{% block content %}
+<div style="text-align: center; margin-bottom: 4rem;">
+    <span class="badge badge-info" style="margin-bottom: 1rem;">Transparent Pricing</span>
+    <h1 style="font-size: 2.6rem;">Choose Your Plan</h1>
+    <p style="color: var(--text-secondary); margin-top: 0.75rem;">All plans include a 14-day free trial. No credit card required to start.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto 5rem auto;">
+    <!-- Starter -->
+    <div class="glass-card" style="padding: 2rem;">
+        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem;">Starter</div>
+        <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Free Forever</h2>
+        <div style="font-size: 2.8rem; font-weight: 800; margin: 1rem 0;">$0<span style="font-size: 1rem; color: var(--text-muted); font-weight: 400;"> / mo</span></div>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem;">
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>10 document uploads/mo</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Grammar & Spelling Check</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Side-by-Side Diff Viewer</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Export to TXT & Markdown</li>
+            <li><i data-lucide="x" style="color: var(--text-muted); width: 14px; margin-right: 0.5rem;"></i>OCR Image Scanning</li>
+            <li><i data-lucide="x" style="color: var(--text-muted); width: 14px; margin-right: 0.5rem;"></i>Voice Dictation</li>
+        </ul>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-outline" style="width: 100%; padding: 0.8rem;">Get Started Free</a>
+    </div>
+
+    <!-- Pro -->
+    <div class="glass-card" style="padding: 2rem; border-color: var(--primary); box-shadow: 0 0 40px var(--primary-glow);">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted);">Pro</div>
+            <span class="badge badge-info">Most Popular</span>
+        </div>
+        <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Professional</h2>
+        <div style="font-size: 2.8rem; font-weight: 800; margin: 1rem 0; color: var(--primary);">$29<span style="font-size: 1rem; color: var(--text-muted); font-weight: 400;"> / mo</span></div>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem;">
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Unlimited document uploads</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>All 14+ AI Detection Modules</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>OCR Image Text Scanning</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Voice Dictation Tool</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Export PDF, DOCX, TXT, MD</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Priority AI Processing</li>
+        </ul>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary" style="width: 100%; padding: 0.8rem;">Start 14-Day Free Trial</a>
+    </div>
+
+    <!-- Enterprise -->
+    <div class="glass-card" style="padding: 2rem;">
+        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem;">Enterprise</div>
+        <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Corporate Suite</h2>
+        <div style="font-size: 2.8rem; font-weight: 800; margin: 1rem 0;">Custom<span style="font-size: 1rem; color: var(--text-muted); font-weight: 400;"> pricing</span></div>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem;">
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Everything in Pro</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Team Workspaces & SSO</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>REST API Access</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Dedicated Account Manager</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>Custom NLP Fine-tuning</li>
+            <li><i data-lucide="check" style="color: var(--accent-emerald); width: 14px; margin-right: 0.5rem;"></i>99.9% SLA Uptime</li>
+        </ul>
+        <a href="{{ url_for('main.contact') }}" class="btn btn-secondary" style="width: 100%; padding: 0.8rem;">Contact Sales Team</a>
+    </div>
+</div>
+{% endblock %}
